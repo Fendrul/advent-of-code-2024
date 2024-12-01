@@ -1,6 +1,7 @@
 [build]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+rustflags = ["-C", "target-cpu=native"]
 
 [profile.release]
 codegen-units = 1
-lto = false
+lto = "fat"
+panic = "abort"
