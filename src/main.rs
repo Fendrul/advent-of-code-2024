@@ -1,4 +1,4 @@
-use tklog::handle::FileTimeMode;
+use std::mem::swap;
 use tklog::{trace, Format, LEVEL, LOG};
 
 fn main() {

@@ -1,6 +1,6 @@
 use std::fs::File;
-use std::io::BufReader;
 use std::io::prelude::*;
+use std::io::BufReader;
 use std::path::PathBuf;
 
 pub struct FileReader {
@@ -45,7 +45,7 @@ impl FileReader {
             Ok(_) => Some(line),
         }
     }
-    
+
     pub fn read_file(path: &str) -> Result<String, std::io::Error> {
         let path_to_project: PathBuf = get_path_to_project();
         let path_to_file = path_to_project.join(path);
@@ -69,7 +69,8 @@ impl Iterator for FileReader {
 }
 
 fn get_path_to_project() -> PathBuf {
-    let current_dir = std::env::current_dir().expect("Failed to get current directory to the project.");
+    let current_dir =
+        std::env::current_dir().expect("Failed to get current directory to the project.");
     let mut new_path = PathBuf::new();
 
     for component in current_dir.components() {
@@ -122,7 +123,7 @@ mod tests {
     #[test]
     fn return_err_when_path_does_not_exist() {
         let file_reader = FileReader::new("non_existent_file.txt");
-        
+
         assert!(file_reader.is_err());
     }
 
