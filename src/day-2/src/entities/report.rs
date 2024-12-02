@@ -26,12 +26,12 @@ impl Report {
                 for i in 0..self.numbers.len() {
                     let mut current_vec = self.numbers.clone();
                     current_vec.remove(i);
-                    
+
                     if Safe == give_safetyness(&current_vec) {
                         return Safe;
                     }
                 }
-                
+
                 Unsafe
             }
         }

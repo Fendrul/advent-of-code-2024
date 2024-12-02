@@ -8,17 +8,15 @@ use file_reader::file_reader::FileReader;
 use std::error::Error;
 use std::time::Instant;
 
+#[warn(clippy::pedantic)]
 fn main() -> Result<(), Box<dyn Error>> {
     let timer = Instant::now();
     let path_to_file = "src/day-2/src/input";
 
     let (number_safe_report, number_safe_report_with_tolerance) = solve(path_to_file)?;
 
-    println!("Number of safe reports: {}", number_safe_report);
-    println!(
-        "Number of safe reports with tolerance: {}",
-        number_safe_report_with_tolerance
-    );
+    println!("Number of safe reports: {number_safe_report}");
+    println!("Number of safe reports with tolerance: {number_safe_report_with_tolerance}");
 
     println!("Finished in: {}µs", timer.elapsed().as_micros());
     Ok(())
@@ -57,8 +55,9 @@ fn solve(path_to_file: &str) -> Result<(i32, i32), Box<dyn Error>> {
 
 #[cfg(test)]
 mod test {
-    use crate::entities::report::Safetyness::Safe;
     use super::*;
+    use crate::entities::report::Safetyness::Safe;
+    use std::assert_matches::assert_matches;
 
     #[test]
     fn test_main() -> Result<(), Box<dyn std::error::Error>> {
@@ -80,6 +79,6 @@ mod test {
 
         let safetyness = report.get_safetyness_with_tolerance();
 
-        assert_eq!(safetyness, Safe);
+        assert_matches!(safetyness, Safe);
     }
 }
