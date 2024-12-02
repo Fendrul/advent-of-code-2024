@@ -64,7 +64,7 @@ fn give_safetyness(slice: &[i32]) -> Safetyness {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum Direction {
+enum Direction {
     Increasing,
     Decreasing,
 }
@@ -83,4 +83,14 @@ impl Direction {
 pub enum Safetyness {
     Safe,
     Unsafe,
+}
+
+pub trait VecUtils<T> {
+    fn pair_wise(&self, interval: usize) -> Zip<Iter<'_, T>, Skip<Iter<'_, T>>>;
+}
+
+impl<T> VecUtils<T> for &[T] {
+    fn pair_wise(&self, interval: usize) -> Zip<Iter<'_, T>, Skip<Iter<'_, T>>> {
+        self.iter().zip(self.iter().skip(interval))
+    }
 }

@@ -69,6 +69,7 @@ mod test {
         let (result, result_with_tolerance) = solve("src/day-2/src/input")?;
 
         assert_eq!(390, result);
+        assert_eq!(439, result_with_tolerance);
 
         Ok(())
     }
