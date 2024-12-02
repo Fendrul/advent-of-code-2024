@@ -1,7 +1,9 @@
+use Ordering::{Equal, Greater, Less};
 use Safetyness::{Safe, Unsafe};
-use std::cmp::PartialEq;
+use std::cmp::{Ordering, PartialEq};
 use std::iter::{Skip, Zip};
 use std::slice::Iter;
+use Direction::{Decreasing, Increasing, Flat};
 
 #[derive(Debug)]
 pub struct Report {
@@ -50,12 +52,11 @@ fn give_safetyness(slice: &[i32]) -> Safetyness {
             Some(Direction::from(*current, *next))
         };
 
-        if global_direction != Some(Direction::from(*current, *next)) {
+        if global_direction != Some(Direction::from(*current, *next)) || matches!(global_direction, Some(Flat)){
             return Unsafe;
         }
 
-        let diff = (current - next).abs();
-        if diff > 3 || diff == 0 {
+        if (current - next).abs() > 3 {
             return Unsafe;
         }
     }
@@ -67,14 +68,15 @@ fn give_safetyness(slice: &[i32]) -> Safetyness {
 enum Direction {
     Increasing,
     Decreasing,
+    Flat
 }
 
 impl Direction {
     fn from(x: i32, y: i32) -> Direction {
-        if x < y {
-            Direction::Increasing
-        } else {
-            Direction::Decreasing
+        match x.cmp(&y) {
+            Less => Increasing,
+            Greater => Decreasing,
+            Equal => Flat,
         }
     }
 }

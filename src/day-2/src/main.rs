@@ -23,7 +23,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn solve(path_to_file: &str) -> Result<(i32, i32), Box<dyn Error>> {
-    let (number_safe_report, number_safe_report_with_tolerance) = FileReader::new(path_to_file)?
+    let (safe_count, safe_with_tolerance_count) = FileReader::new(path_to_file)?
         .map(|line| {
             let numbers = line
                 .split_whitespace()
@@ -37,14 +37,14 @@ fn solve(path_to_file: &str) -> Result<(i32, i32), Box<dyn Error>> {
 
             (is_safe, is_safe_with_tolerance)
         })
-        .fold((0, 0), |mut acc, (is_safe, is_safe_with_tolerance)| {
-            acc.0 += is_safe;
-            acc.1 += is_safe_with_tolerance;
+        .fold((0, 0), |mut acc, (safe_count, safe_with_tolerance_count)| {
+            acc.0 += safe_count;
+            acc.1 += safe_with_tolerance_count;
             
             acc
         });
 
-    Ok((number_safe_report, number_safe_report_with_tolerance))
+    Ok((safe_count, safe_with_tolerance_count))
 }
 
 #[cfg(test)]
