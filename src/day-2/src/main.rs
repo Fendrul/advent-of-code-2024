@@ -3,7 +3,7 @@
 
 mod entities;
 
-use crate::entities::report::{Report, Safetyness};
+use crate::entities::report::{Report};
 use file_reader::file_reader::FileReader;
 use std::error::Error;
 use std::time::Instant;
@@ -23,32 +23,26 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn solve(path_to_file: &str) -> Result<(i32, i32), Box<dyn Error>> {
-    let vec_report = FileReader::new(path_to_file)?
+    let (number_safe_report, number_safe_report_with_tolerance) = FileReader::new(path_to_file)?
         .map(|line| {
             let numbers = line
                 .split_whitespace()
                 .map(|s| s.parse::<i32>().unwrap())
                 .collect::<Vec<i32>>();
 
-            Report::new(numbers)
-        })
-        .collect::<Vec<_>>();
+            let report = Report::new(numbers);
+            
+            let is_safe = report.get_safetyness().get_value();
+            let is_safe_with_tolerance = report.get_safetyness_with_tolerance().get_value();
 
-    let number_safe_report = vec_report
-        .iter()
-        .map(|report| match report.get_safetyness() {
-            Safetyness::Safe => 1,
-            Safetyness::Unsafe => 0,
+            (is_safe, is_safe_with_tolerance)
         })
-        .sum::<i32>();
-
-    let number_safe_report_with_tolerance = vec_report
-        .iter()
-        .map(|report| match report.get_safetyness_with_tolerance() {
-            Safetyness::Safe => 1,
-            Safetyness::Unsafe => 0,
-        })
-        .sum::<i32>();
+        .fold((0, 0), |mut acc, (is_safe, is_safe_with_tolerance)| {
+            acc.0 += is_safe;
+            acc.1 += is_safe_with_tolerance;
+            
+            acc
+        });
 
     Ok((number_safe_report, number_safe_report_with_tolerance))
 }

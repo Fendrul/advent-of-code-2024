@@ -85,6 +85,14 @@ pub enum Safetyness {
     Unsafe,
 }
 
+impl Safetyness {
+    pub fn get_value(&self) -> i32 {
+        match self {
+            Safe => 1,
+            Unsafe => 0,
+        }
+    }
+}
 pub trait VecUtils<T> {
     fn pair_wise(&self, interval: usize) -> Zip<Iter<'_, T>, Skip<Iter<'_, T>>>;
 }
