@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::BufReader;
+use std::io::{BufReader, Error};
 use std::path::PathBuf;
 
 pub struct FileReader {
@@ -21,9 +21,8 @@ impl FileReader {
     /// # Errors
     ///
     /// This function will return an error if the file cannot be opened.
-    pub fn new(path_to_file_string: &str) -> Result<FileReader, std::io::Error> {
-        let path_to_project: PathBuf = get_path_to_project();
-        let path_to_file = path_to_project.join(path_to_file_string);
+    pub fn new(path_to_file_string: &str) -> Result<FileReader, Error> {
+        let path_to_file = PathBuf::from(path_to_file_string);
 
         let file = File::open(path_to_file)?;
 
@@ -46,8 +45,8 @@ impl FileReader {
         }
     }
 
-    pub fn read_file(path: &str) -> Result<String, std::io::Error> {
-        let path_to_project: PathBuf = get_path_to_project();
+    pub fn read_file(path: &str) -> Result<String, Error> {
+        let path_to_project: PathBuf = PathBuf::from(path);
         let path_to_file = path_to_project.join(path);
 
         let file = File::open(path_to_file)?;
@@ -66,36 +65,6 @@ impl Iterator for FileReader {
     fn next(&mut self) -> Option<Self::Item> {
         self.read_line()
     }
-}
-
-fn get_path_to_project() -> PathBuf {
-    let current_dir =
-        std::env::current_dir().expect("Failed to get current directory to the project.");
-    let mut new_path = PathBuf::new();
-
-    for component in current_dir.components() {
-        match component {
-            std::path::Component::Prefix(prefix) => {
-                new_path.push(prefix.as_os_str());
-            }
-
-            std::path::Component::RootDir => {
-                new_path.push(std::path::MAIN_SEPARATOR.to_string());
-            }
-
-            std::path::Component::Normal(os_str) => {
-                if os_str == "src" {
-                    break;
-                }
-
-                new_path.push(os_str);
-            }
-
-            _ => {}
-        }
-    }
-
-    new_path
 }
 
 #[cfg(test)]

@@ -3,5 +3,13 @@ name = "advent-of-code-2024"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[workspace]
+members = [
+    "day-1",
+    "day-2"
+]
+
+[workspace.dependencies]
 tklog = "0.2.7"
+file_reader = { path = "utils/file_reader" }
+array_utils = { path = "utils/array_utils" }

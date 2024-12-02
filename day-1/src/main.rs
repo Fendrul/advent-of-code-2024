@@ -5,10 +5,13 @@ use std::time::Instant;
 
 type ParsingData = (Vec<i32>, Vec<i32>, HashMap<i32, i32>);
 
+const PATH: &str = env!("CARGO_MANIFEST_DIR");
+
 fn main() -> Result<(), Box<dyn Error>> {
     let timer = Instant::now();
+    let file_path = format!("{PATH}/src/input");
 
-    let (total_sum, similarity_score) = solve_puzzle("src/day-1/src/input")?;
+    let (total_sum, similarity_score) = solve_puzzle(&file_path)?;
 
     println!("The total sum is: {total_sum}");
     println!("The similarity score is: {similarity_score}");

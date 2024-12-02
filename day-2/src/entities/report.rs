@@ -1,18 +1,17 @@
+use Direction::{Decreasing, Flat, Increasing};
 use Ordering::{Equal, Greater, Less};
 use Safetyness::{Safe, Unsafe};
+use array_utils::ArrayUtils;
 use std::cmp::{Ordering, PartialEq};
-use std::iter::{Skip, Zip};
-use std::slice::Iter;
-use Direction::{Decreasing, Increasing, Flat};
 
 #[derive(Debug)]
 pub struct Report {
-    numbers: Vec<i32>,
+    numbers: Vec<usize>,
     safetyness: Safetyness,
 }
 
 impl Report {
-    pub fn new(numbers: Vec<i32>) -> Report {
+    pub fn new(numbers: Vec<usize>) -> Report {
         Report {
             safetyness: give_safetyness(&numbers),
             numbers,
@@ -42,21 +41,19 @@ impl Report {
     }
 }
 
-fn give_safetyness(slice: &[i32]) -> Safetyness {
+fn give_safetyness(slice: &[usize]) -> Safetyness {
     let mut global_direction: Option<Direction> = None;
 
-    for (current, next) in slice.pair_wise(1) {
-        global_direction = if global_direction.is_some() {
-            global_direction
-        } else {
-            Some(Direction::from(*current, *next))
-        };
+    for (current, next) in slice.pairwise(1) {
+        global_direction = global_direction.or_else(|| Some(Direction::from(current, next)));
 
-        if global_direction != Some(Direction::from(*current, *next)) || matches!(global_direction, Some(Flat)){
+        if global_direction != Some(Direction::from(current, next))
+            || matches!(global_direction, Some(Flat))
+        {
             return Unsafe;
         }
 
-        if (current - next).abs() > 3 {
+        if current.abs_diff(*next) > 3 {
             return Unsafe;
         }
     }
@@ -64,16 +61,16 @@ fn give_safetyness(slice: &[i32]) -> Safetyness {
     Safe
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq)]
 enum Direction {
     Increasing,
     Decreasing,
-    Flat
+    Flat,
 }
 
 impl Direction {
-    fn from(x: i32, y: i32) -> Direction {
-        match x.cmp(&y) {
+    fn from(x: &usize, y: &usize) -> Direction {
+        match x.cmp(y) {
             Less => Increasing,
             Greater => Decreasing,
             Equal => Flat,
@@ -88,19 +85,10 @@ pub enum Safetyness {
 }
 
 impl Safetyness {
-    pub fn get_value(&self) -> i32 {
+    pub fn get_value(&self) -> usize {
         match self {
             Safe => 1,
             Unsafe => 0,
         }
-    }
-}
-pub trait VecUtils<T> {
-    fn pair_wise(&self, interval: usize) -> Zip<Iter<'_, T>, Skip<Iter<'_, T>>>;
-}
-
-impl<T> VecUtils<T> for &[T] {
-    fn pair_wise(&self, interval: usize) -> Zip<Iter<'_, T>, Skip<Iter<'_, T>>> {
-        self.iter().zip(self.iter().skip(interval))
     }
 }
