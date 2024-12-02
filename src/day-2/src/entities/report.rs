@@ -1,5 +1,7 @@
 use Safetyness::{Safe, Unsafe};
 use std::cmp::PartialEq;
+use std::iter::{Skip, Zip};
+use std::slice::Iter;
 
 #[derive(Debug)]
 pub struct Report {
@@ -39,11 +41,9 @@ impl Report {
 }
 
 fn give_safetyness(slice: &[i32]) -> Safetyness {
-    let interval = 1;
-
     let mut global_direction: Option<Direction> = None;
 
-    for (current, next) in slice.iter().zip(slice.iter().skip(interval)) {
+    for (current, next) in slice.pair_wise(1) {
         global_direction = if global_direction.is_some() {
             global_direction
         } else {
