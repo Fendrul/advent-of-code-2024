@@ -61,13 +61,13 @@ fn parse(path_to_file: &str) -> Result<ParsingData, Box<dyn Error>> {
             .next()
             .expect("Failed to get left number.")
             .parse::<i32>()
-            .expect("Failed to parse left number.");
+            .expect("Failed to entities left number.");
 
         let right_number = split
             .next()
             .expect("Failed to get right number.")
             .parse::<i32>()
-            .expect("Failed to parse right number.");
+            .expect("Failed to entities right number.");
 
         left_vec.push(left_number);
         right_vec.push(right_number);

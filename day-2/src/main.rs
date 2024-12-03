@@ -29,7 +29,7 @@ fn solve(path_to_file: &str) -> Result<(usize, usize), Box<dyn Error>> {
     let result = FileReader::new(path_to_file)?.fold((0, 0), |acc, line| {
         let numbers = line
             .split_whitespace()
-            .map(|s| s.parse::<usize>().expect("Could not parse number."))
+            .map(|s| s.parse::<usize>().expect("Could not entities number."))
             .collect::<Vec<_>>();
 
         let report = Report::new(numbers);

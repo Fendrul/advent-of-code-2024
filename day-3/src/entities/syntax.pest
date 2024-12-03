@@ -1,0 +1,13 @@
+WHITESPACE = _{ " " | "\t" }
+
+file = { junk ~ (!instruction_char ~ mul_expression ~ junk)* ~ instruction* }
+
+instruction       = _{ dont | doit }
+dont              =  { "don't()" ~ instruction_body }
+doit              =  { "do()" ~ instruction_body }
+instruction_body  = _{ (junk ~ mul_expression)* ~ junk }
+instruction_char  = _{ "don't()" | "do()" }
+
+junk           = _{ (!(mul_expression | instruction_char) ~ ANY)* }
+mul_expression =  { "mul(" ~ number ~ "," ~ number ~ ")" }
+number         =  { ASCII_DIGIT+ }
