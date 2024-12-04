@@ -7,12 +7,15 @@ edition = "2021"
 members = [
     "day-1",
     "day-2",
-    "day-3"
+    "day-3",
+    "day-4",
 ]
 
 [workspace.dependencies]
 tklog = "0.2.7"
 pest = "2.7.14"
 pest_derive = "2.7.14"
+itertools = "0.13.0"
 file_reader = { path = "utils/file_reader" }
 array_utils = { path = "utils/array_utils" }
+macro_utils = { path = "utils/macro_utils" }

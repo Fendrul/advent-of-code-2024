@@ -1,10 +1,10 @@
 #![feature(let_chains)]
 #![feature(assert_matches)]
 
-mod entities;
+pub mod report;
 
-use crate::entities::report::Report;
 use file_reader::file_reader::FileReader;
+use report::Report;
 use std::env;
 use std::error::Error;
 use std::time::Instant;
@@ -46,7 +46,7 @@ fn solve(path_to_file: &str) -> Result<(usize, usize), Box<dyn Error>> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::entities::report::Safetyness::Safe;
+    use crate::report::Safetyness::Safe;
     use std::assert_matches::assert_matches;
 
     #[test]

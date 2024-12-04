@@ -1,7 +1,7 @@
 use crate::entities::mul_expression::{Instruction, MulExpression};
 use crate::entities::parser::ParsingError::InvalidFileSyntax;
-use pest::iterators::{Pair, Pairs};
 use pest::Parser;
+use pest::iterators::{Pair, Pairs};
 use pest_derive::Parser;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
