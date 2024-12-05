@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 file_reader = { workspace = true }
+array_utils = { workspace = true }

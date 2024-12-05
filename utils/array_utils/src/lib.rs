@@ -1,6 +1,8 @@
 pub mod coordinate;
 
 use crate::coordinate::Coordinates;
+use std::collections::HashSet;
+use std::hash::Hash;
 use std::iter::{Skip, Zip};
 use std::slice::Iter;
 
@@ -100,6 +102,34 @@ impl<T> TableUtils<T> for [&[T]] {
         let (new_x, new_y) = move_coordinates(&coordinate, direction)?;
 
         self.get(new_y).and_then(|row| row.get(new_x))
+    }
+}
+
+pub trait Extend<T> {
+    fn extend(&self, other: T);
+}
+
+pub trait AppendInSet<T> {
+    fn append_element<U>(&mut self, item: T, item_to_append: U)
+    where
+        T: Default + Extend<U> + Hash + Eq;
+}
+
+impl<T> AppendInSet<T> for HashSet<T>
+where
+    T: Default + Extend<T> + Hash + Eq,
+{
+    fn append_element<U>(&mut self, item: T, item_to_append: U)
+    where
+        T: Default + Extend<U> + Hash + Eq,
+    {
+        if let Some(existing_element) = self.get(&item) {
+            existing_element.extend(item_to_append);
+        } else {
+            let new_element = T::default();
+            new_element.extend(item_to_append);
+            self.insert(new_element);
+        }
     }
 }
 
