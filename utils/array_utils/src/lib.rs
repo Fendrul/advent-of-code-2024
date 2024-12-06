@@ -1,6 +1,7 @@
 pub mod coordinate;
 
 use crate::coordinate::Coordinates;
+use DirectionMove::{Down, DownLeft, DownRight, Left, Right, Up, UpLeft, UpRight};
 use std::collections::HashSet;
 use std::hash::Hash;
 use std::iter::{Skip, Zip};
@@ -51,6 +52,12 @@ pub trait TableUtils<T> {
         coordinate: U,
         direction: DirectionMove,
     ) -> Option<&T>;
+
+    fn get_mut_from_coordinates_move<U: Into<Coordinates>>(
+        &mut self,
+        coordinate: U,
+        direction: DirectionMove,
+    ) -> Option<&mut T>;
 }
 
 impl<T> TableUtils<T> for Vec<Vec<T>> {
@@ -73,35 +80,20 @@ impl<T> TableUtils<T> for Vec<Vec<T>> {
         direction: DirectionMove,
     ) -> Option<&T> {
         let coordinate = coordinate.into();
-        let (new_x, new_y) = move_coordinates(&coordinate, direction)?;
+        let (new_x, new_y) = move_coordinates(coordinate, direction)?;
 
         self.get(new_y).and_then(|row| row.get(new_x))
     }
-}
 
-impl<T> TableUtils<T> for [&[T]] {
-    fn iter_table_with_coordinates<'a>(&'a self) -> impl Iterator<Item = (&'a T, Coordinates)>
-    where
-        T: 'a,
-    {
-        let width = self.len();
-        let height = self[0].len();
-        (0..width).flat_map(move |y| (0..height).map(move |x| (&self[y][x], Coordinates { x, y })))
-    }
-
-    fn get_from_coordinates(&self, x: usize, y: usize) -> Option<&T> {
-        self.get(y).and_then(|row| row.get(x))
-    }
-
-    fn get_from_coordinate_move<U: Into<Coordinates>>(
-        &self,
+    fn get_mut_from_coordinates_move<U: Into<Coordinates>>(
+        &mut self,
         coordinate: U,
         direction: DirectionMove,
-    ) -> Option<&T> {
+    ) -> Option<&mut T> {
         let coordinate = coordinate.into();
-        let (new_x, new_y) = move_coordinates(&coordinate, direction)?;
+        let (new_x, new_y) = move_coordinates(coordinate, direction)?;
 
-        self.get(new_y).and_then(|row| row.get(new_x))
+        self.get_mut(new_y).and_then(|row| row.get_mut(new_x))
     }
 }
 
@@ -133,7 +125,13 @@ where
     }
 }
 
-fn move_coordinates(coordinate: &Coordinates, direction: DirectionMove) -> Option<(usize, usize)> {
+pub fn move_coordinates<T: Into<Coordinates>, U: Into<DirectionMove>>(
+    coordinate: T,
+    direction: U,
+) -> Option<(usize, usize)> {
+    let coordinate = coordinate.into();
+    let direction = direction.into();
+
     let (x, y) = coordinate.to_tuple();
     let (dx, dy) = direction.get_direction();
     let new_x = x.checked_add_signed(dx);
@@ -150,6 +148,8 @@ fn move_coordinates(coordinate: &Coordinates, direction: DirectionMove) -> Optio
 pub enum DirectionMove {
     Up,
     Down,
+    Left,
+    Right,
     UpLeft,
     UpRight,
     DownLeft,
@@ -159,12 +159,14 @@ pub enum DirectionMove {
 impl DirectionMove {
     pub fn get_direction(&self) -> (isize, isize) {
         match self {
-            DirectionMove::Up => (0, -1),
-            DirectionMove::Down => (0, 1),
-            DirectionMove::UpLeft => (-1, -1),
-            DirectionMove::UpRight => (1, -1),
-            DirectionMove::DownLeft => (-1, 1),
-            DirectionMove::DownRight => (1, 1),
+            Up => (0, -1),
+            Down => (0, 1),
+            Left => (-1, 0),
+            Right => (1, 0),
+            UpLeft => (-1, -1),
+            UpRight => (1, -1),
+            DownLeft => (-1, 1),
+            DownRight => (1, 1),
         }
     }
 
@@ -220,21 +222,9 @@ mod test {
     fn test_get_from_coordinate_move() {
         let table = vec![vec![1, 2], vec![3, 4]];
 
-        assert_eq!(
-            Some(&1),
-            table.get_from_coordinate_move((1, 1), DirectionMove::UpLeft)
-        );
-        assert_eq!(
-            None,
-            table.get_from_coordinate_move((1, 0), DirectionMove::UpLeft)
-        );
-        assert_eq!(
-            Some(&2),
-            table.get_from_coordinate_move((0, 1), DirectionMove::UpRight)
-        );
-        assert_eq!(
-            None,
-            table.get_from_coordinate_move((0, 0), DirectionMove::UpLeft)
-        );
+        assert_eq!(Some(&1), table.get_from_coordinate_move((1, 1), UpLeft));
+        assert_eq!(None, table.get_from_coordinate_move((1, 0), UpLeft));
+        assert_eq!(Some(&2), table.get_from_coordinate_move((0, 1), UpRight));
+        assert_eq!(None, table.get_from_coordinate_move((0, 0), UpLeft));
     }
 }
