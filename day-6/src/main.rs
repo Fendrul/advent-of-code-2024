@@ -4,12 +4,12 @@
 use crate::map_element::GuardDirection::{Left, Right, Up};
 use crate::map_element::{GuardDirection, MapType};
 use GuardDirection::Down;
+use MapType::{Guard, Junk, Void};
 use array_utils::{DirectionMove, TableUtils, move_coordinates};
 use file_reader::file_reader::FileReader;
 use map_element::MapElement;
 use std::error::Error;
 use std::time::Instant;
-use MapType::{Guard, Junk, Void};
 
 mod map_element;
 
@@ -92,26 +92,25 @@ fn solve(path_to_file: &str) -> Result<(usize, usize), Box<dyn Error>> {
             'outer: for direction in [Down, Up, Left, Right] {
                 let (mut x, mut y) = junk_element.get_coordinates();
 
-                if let Some(next_tile) = board.get_from_coordinate_move((x, y), DirectionMove::from(direction))
+                if let Some(next_tile) =
+                    board.get_from_coordinate_move((x, y), DirectionMove::from(direction))
                     && let Some(tile_directions) = next_tile.get_directions()
                     && tile_directions.contains(&direction.get_opposed())
-                {} else {
+                {
+                } else {
                     continue 'outer;
                 }
 
                 (x, y) = move_tile(direction, x, y);
 
-
-                while let Some(next_tile) = board.get_from_coordinate_move((x, y), DirectionMove::from(direction))
+                while let Some(next_tile) =
+                    board.get_from_coordinate_move((x, y), DirectionMove::from(direction))
                     && let Some(tile_directions) = next_tile.get_directions()
-                    && tile_directions.contains(&direction.get_opposed())
+                    && (tile_directions.contains(&direction.get_opposed())
+                        || tile_directions.contains(&direction.turn_right()))
                 {
-                    if tile_directions.contains(&direction.turn_right()) {
-                        blocking_tiles_found += 1;
-                        println!("found blocking on lane at ({}, {})\n", next_tile.get_coordinates().0, next_tile.get_coordinates().1);
-                    }
-
                     (x, y) = move_tile(direction, x, y);
+                    println!("moving to ({}, {})\n", x, y);
                 }
 
                 // println!("got out of the lane at ({}, {})\n", x, y);
@@ -124,7 +123,11 @@ fn solve(path_to_file: &str) -> Result<(usize, usize), Box<dyn Error>> {
                         Void(past_directions) | Guard(_, past_directions) => {
                             if past_directions.contains(&direction.turn_right()) {
                                 blocking_tiles_found += 1;
-                                println!("found blocking outside of lane at ({}, {})\n", next_tile.get_coordinates().0, next_tile.get_coordinates().1);
+                                println!(
+                                    "found blocking outside of lane at ({}, {})\n",
+                                    next_tile.get_coordinates().0,
+                                    next_tile.get_coordinates().1
+                                );
                             }
 
                             (x, y) = move_tile(direction, x, y);

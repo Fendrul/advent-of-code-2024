@@ -28,7 +28,7 @@ impl MapElement {
     pub fn get_coordinates(&self) -> (usize, usize) {
         (self.x, self.y)
     }
-    
+
     pub fn get_directions(&self) -> Option<&Vec<GuardDirection>> {
         self.map_type.get_directions()
     }
@@ -87,7 +87,7 @@ impl GuardDirection {
             Left => Up,
         }
     }
-    
+
     pub(crate) fn get_opposed(self) -> GuardDirection {
         match self {
             Up => Down,
@@ -96,7 +96,7 @@ impl GuardDirection {
             Right => Left,
         }
     }
-    
+
     pub(crate) fn turn_left(self) -> GuardDirection {
         match self {
             Up => Left,
