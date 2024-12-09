@@ -21,11 +21,11 @@ impl Calibration {
             .any(|value| value == self.result)
     }
 
-    pub fn get_expression_iter_first_part(&self) -> Box<dyn Iterator<Item=usize> + '_> {
+    pub fn get_expression_iter_first_part(&self) -> Box<dyn Iterator<Item = usize> + '_> {
         self.expression.iter_evaluations_first_part()
     }
-    
-    pub fn get_expression_iter_second_part(&self) -> Box<dyn Iterator<Item=usize> + '_> {
+
+    pub fn get_expression_iter_second_part(&self) -> Box<dyn Iterator<Item = usize> + '_> {
         self.expression.iter_evaluations_second_part()
     }
 
@@ -41,7 +41,7 @@ pub enum Expression {
 }
 
 impl Expression {
-    pub fn iter_evaluations_first_part(&self) -> Box<dyn Iterator<Item=usize> + '_> {
+    pub fn iter_evaluations_first_part(&self) -> Box<dyn Iterator<Item = usize> + '_> {
         match self {
             Expression::Expr(left, right) => Box::new(
                 right
@@ -52,15 +52,12 @@ impl Expression {
         }
     }
 
-    pub fn iter_evaluations_second_part(&self) -> Box<dyn Iterator<Item=usize> + '_> {
+    pub fn iter_evaluations_second_part(&self) -> Box<dyn Iterator<Item = usize> + '_> {
         match self {
             Expression::Expr(left, right) => {
-                Box::new(
-                    right
-                        .iter_evaluations_second_part()
-                        .flat_map(move |right| {
-                            [left + right, left * right, concat_numbers(right, *left)]
-                        }))
+                Box::new(right.iter_evaluations_second_part().flat_map(move |right| {
+                    [left + right, left * right, concat_numbers(right, *left)]
+                }))
             }
             Expression::Litteral(value) => Box::new(std::iter::once(*value)),
         }

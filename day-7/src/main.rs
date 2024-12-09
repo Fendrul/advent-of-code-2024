@@ -5,9 +5,9 @@ mod calibration;
 
 use crate::calibration::{Calibration, Expression};
 use file_reader::file_reader::FileReader;
+use num_bigint::BigUint;
 use std::error::Error;
 use std::time::Instant;
-use num_bigint::BigUint;
 
 const PATH: &str = env!("CARGO_MANIFEST_DIR");
 
@@ -26,9 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn solve(file_path: &str) -> Result<(usize, BigUint), Box<dyn Error>> {
     let calibrations = FileReader::new(file_path)?
-        .map(|line| {
-            parse_line(line)
-        })
+        .map(|line| parse_line(line))
         .collect::<Vec<_>>();
 
     let number_corresponding_expr = calibrations
@@ -89,7 +87,11 @@ mod test {
         let (total_calibration, right_calibration) = solve(&file_path)?;
 
         assert_eq!(total_calibration, 3749, "Couldn't solve the first part");
-        assert_eq!(right_calibration, BigUint::from(11387usize), "Couldn't solve the second part");
+        assert_eq!(
+            right_calibration,
+            BigUint::from(11387usize),
+            "Couldn't solve the second part"
+        );
 
         Ok(())
     }
