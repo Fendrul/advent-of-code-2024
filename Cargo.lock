@@ -64,6 +64,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "day-10"
+version = "0.1.0"
+dependencies = [
+ "array_utils",
+ "file_reader",
+ "itertools",
+]
+
+[[package]]
 name = "day-2"
 version = "0.1.0"
 dependencies = [
@@ -127,6 +136,7 @@ name = "day-9"
 version = "0.1.0"
 dependencies = [
  "file_reader",
+ "itertools",
 ]
 
 [[package]]

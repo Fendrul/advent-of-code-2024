@@ -1,0 +1,9 @@
+[package]
+name = "day-10"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+file_reader = { workspace = true }
+array_utils = { workspace = true }
+itertools = "0.13.0"
